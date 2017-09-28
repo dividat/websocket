@@ -147,7 +147,7 @@ type BadClose
 with the send, you will get some data about it as the result of running this
 task.
 -}
-send : WebSocket -> String -> Task x (Maybe BadSend)
+send : WebSocket -> Message -> Task x (Maybe BadSend)
 send =
     Native.WebSocket.send
 

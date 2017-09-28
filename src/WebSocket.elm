@@ -43,12 +43,22 @@ type Message
     | Text String
 
 
+toLowLevelMessage : Message -> WS.Message
+toLowLevelMessage message =
+    case message of
+        Binary buffer ->
+            WS.Binary buffer
+
+        Text string ->
+            WS.Text string
+
+
 
 -- COMMANDS
 
 
 type MyCmd msg
-    = Send String String
+    = Send String Message
 
 
 {-| Send a message to a particular address. You might say something like this:
@@ -60,7 +70,7 @@ type MyCmd msg
 send one message and then closed. Not good!
 
 -}
-send : String -> String -> Cmd msg
+send : String -> Message -> Cmd msg
 send url message =
     command (Send url message)
 
@@ -140,7 +150,7 @@ type alias SocketsDict =
 
 
 type alias QueuesDict =
-    Dict.Dict String (List String)
+    Dict.Dict String (List Message)
 
 
 type alias SubsDict msg =
@@ -217,7 +227,7 @@ sendMessagesHelp cmds socketsDict queuesDict =
         (Send name msg) :: rest ->
             case Dict.get name socketsDict of
                 Just (Connected socket) ->
-                    WS.send socket msg
+                    WS.send socket (toLowLevelMessage msg)
                         &> sendMessagesHelp rest socketsDict queuesDict
 
                 _ ->
@@ -295,7 +305,7 @@ onSelfMsg router selfMsg state =
 
                 Just messages ->
                     List.foldl
-                        (\msg task -> WS.send socket msg &> task)
+                        (\msg task -> WS.send socket (toLowLevelMessage msg) &> task)
                         (Task.succeed (removeQueue name (updateSocket name (Connected socket) state)))
                         messages
 

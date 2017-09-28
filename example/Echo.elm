@@ -6,7 +6,7 @@ import Html.Events as HE
 
 --
 
-import WebSocket
+import WebSocket exposing (Message(..))
 
 
 --
@@ -48,7 +48,7 @@ init =
 
 type Msg
     = Response WebSocket.Message
-    | Send String
+    | Send WebSocket.Message
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -58,18 +58,12 @@ update msg model =
             model ! [ WebSocket.send echoServer msg ]
 
         Response msg ->
-            case msg of
-                WebSocket.Binary buffer ->
-                    let
-                        msg_ =
-                            buffer
-                                |> Binary.length
-                                |> Debug.log "binary"
-                    in
-                        model ! []
-
-                WebSocket.Text msg ->
-                    msg ! []
+            let
+                msg_ =
+                    msg
+                        |> Debug.log "Response"
+            in
+                model ! []
 
 
 
@@ -88,5 +82,6 @@ subscriptions model =
 view : Model -> H.Html Msg
 view model =
     H.div []
-        [ H.button [ HE.onClick <| Send "Hello" ] [ H.text "Hello" ]
+        [ H.button [ HE.onClick <| Send (Text "Hello") ] [ H.text "Send Hello" ]
+        , H.button [ HE.onClick <| Send (Binary <| Binary.zeros 10) ] [ H.text "Beep" ]
         ]

@@ -42,7 +42,7 @@ var _dividat$websocket$Native_WebSocket = (function () {
     })
   }
 
-  function send (socket, string) {
+  function send (socket, msg) {
     return _elm_lang$core$Native_Scheduler.nativeBinding(function (callback) {
       var result =
       socket.readyState === WebSocket.OPEN
@@ -50,7 +50,7 @@ var _dividat$websocket$Native_WebSocket = (function () {
       : _elm_lang$core$Maybe$Just({ ctor: 'NotOpen' })
 
       try {
-        socket.send(string)
+        socket.send(msg._0)
       } catch (err) {
         result = _elm_lang$core$Maybe$Just({ ctor: 'BadString' })
       }
