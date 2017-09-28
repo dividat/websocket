@@ -1,22 +1,13 @@
-# WebSockets
+# Elm WebSockets with Binary support
 
-Web sockets make it cheaper to talk to your servers.
+Use [elm-binary](https://github.com/dividat/elm-binary) in [elm-lang/websocket](https://github.com/elm-lang/websocket) to support binary data over WebSocket.
 
+**_WARNING: Very experimental!_**
 
-## Benefits
+## Native modules
 
-Connecting to a server takes some time, so with web sockets, you make that
-connection once and then keep using. The major benefits of this are:
+As this package uses Elm Native modules you will need to install with something like [elm-github-install](https://github.com/gdotdesign/elm-github-install).
 
-  1. It is faster to send messages. No need to do a bunch of work for every
-  single message.
+## Examples
 
-  2. The server can push messages to you. With normal HTTP you would have to
-  keep *asking* for changes, but a web socket, the server can talk to you
-  whenever it wants. This means there is less unnecessary network traffic.
-
-
-## Learn
-
-The best way to learn how to use this library is to read [guide.elm-lang.org](http://guide.elm-lang.org/), particularly the section on [The Elm Architecture](http://guide.elm-lang.org/architecture/index.html).
-
+A simple echo server and client is given in the `examples/` folder.

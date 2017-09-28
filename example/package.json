@@ -2,6 +2,9 @@
   "name": "websocket",
   "version": "1.0.2",
   "main": "index.js",
+  "scripts": {
+    "start": "node echo.js"
+  },
   "repository": "git@github.com/dividat/websocket.git",
   "author": "pukkamustard <pukkamustard@posteo.net>",
   "license": "BSD3",
