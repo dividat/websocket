@@ -3,6 +3,7 @@ effect module WebSocket
     exposing
         ( Message(..)
         , send
+        , sendImmediately
         , listen
         , keepAlive
         )
@@ -58,7 +59,7 @@ toLowLevelMessage message =
 
 
 type MyCmd msg
-    = Send String Message
+    = Send String Bool Message
 
 
 {-| Send a message to a particular address. You might say something like this:
@@ -72,12 +73,26 @@ send one message and then closed. Not good!
 -}
 send : String -> Message -> Cmd msg
 send url message =
-    command (Send url message)
+    command (Send url True message)
+
+
+{-| Send a message to a particular address, but drop the message if the socket
+is not currently connected.
+
+    sendImmediately "ws://echo.websocket.org" "Hello now or nevermind!"
+
+This is useful for real-time applications that don't benefit from delayed
+message transmission.
+
+-}
+sendImmediately : String -> Message -> Cmd msg
+sendImmediately url message =
+    command (Send url False message)
 
 
 cmdMap : (a -> b) -> MyCmd a -> MyCmd b
-cmdMap _ (Send url msg) =
-    Send url msg
+cmdMap _ (Send url queue msg) =
+    Send url queue msg
 
 
 
@@ -224,14 +239,21 @@ sendMessagesHelp cmds socketsDict queuesDict =
         [] ->
             Task.succeed queuesDict
 
-        (Send name msg) :: rest ->
+        (Send name queue msg) :: rest ->
             case Dict.get name socketsDict of
                 Just (Connected socket) ->
                     WS.send socket (toLowLevelMessage msg)
                         &> sendMessagesHelp rest socketsDict queuesDict
 
                 _ ->
-                    sendMessagesHelp rest socketsDict (Dict.update name (add msg) queuesDict)
+                    let
+                        queuesDict_ =
+                            if queue then
+                                Dict.update name (add msg) queuesDict
+                            else
+                                queuesDict
+                    in
+                        sendMessagesHelp rest socketsDict queuesDict_
 
 
 buildSubDict : List (MySub msg) -> SubsDict msg -> SubsDict msg

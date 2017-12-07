@@ -15,7 +15,7 @@
         "dividat/elm-binary": "1.0.0 <= v < 2.0.0"
     },
     "dependency-sources": {
-      "dividat/elm-binary": {"url": "git@github.com:dividat/elm-binary", "ref": "develop"}
+      "dividat/elm-binary": {"url": "git@github.com:dividat/elm-binary", "ref": "master"}
     },
     "elm-version": "0.18.0 <= v < 0.19.0"
 }
